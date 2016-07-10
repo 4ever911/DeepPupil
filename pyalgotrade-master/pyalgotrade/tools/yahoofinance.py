@@ -38,6 +38,14 @@ def __adjust_month(month):
 def download_csv(instrument, begin, end, frequency):
     url = "http://ichart.finance.yahoo.com/table.csv?s=%s&a=%d&b=%d&c=%d&d=%d&e=%d&f=%d&g=%s&ignore=.csv" % (instrument, __adjust_month(begin.month), begin.day, begin.year, __adjust_month(end.month), end.day, end.year, frequency)
     return csvutils.download_csv(url)
+def download_csv_cn(instrument, frequency=None):
+
+    match = re.match('6', instrument)
+    if match:
+        url = "http://table.finance.yahoo.com/table.csv?s=%s.ss" % (instrument)
+    else:
+        url = "http://table.finance.yahoo.com/table.csv?s=%s.sz" % (instrument)
+    return csvutils.download_csv(url)
 
 
 def download_daily_bars(instrument, year, csvFile):
@@ -56,6 +64,22 @@ def download_daily_bars(instrument, year, csvFile):
     f.write(bars)
     f.close()
 
+
+def download_daily_bars_cn(instrument,  csvFile,  year=None):
+    """Download daily bars from Yahoo! Finance for a given year.
+
+    :param instrument: Instrument identifier.
+    :type instrument: string.
+    :param year: The year.
+    :type year: int.
+    :param csvFile: The path to the CSV file to write.
+    :type csvFile: string.
+    """
+
+    bars = download_csv_cn(instrument)
+    f = open(csvFile, "w")
+    f.write(bars)
+    f.close()
 
 def download_weekly_bars(instrument, year, csvFile):
     """Download weekly bars from Yahoo! Finance for a given year.
